@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-demo
+  labels:
+    app: spring-boot-demo
+spec:
+  replicas: 2  # Run 2 pods for scaling
+  selector:
+    matchLabels:
+      app: spring-boot-demo
+  template:
+    metadata:
+      labels:
+        app: spring-boot-demo
+    spec:
+      containers:
+        - name: demo
+          image: codedev001/spring-boot-demo:1.1  # Your image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          startupProbe:
+            httpGet:
+              path: /actuator/health       # Broad health check to confirm app is booting
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5               # Check every 5s
+            failureThreshold: 30           # Allow up to ~2.5 minutes total startup time (30 × 5s)
+            timeoutSeconds: 5
+          livenessProbe: # Health checks
+            httpGet:
+              path: /actuator/health/liveness  # Add Spring Boot Actuator dependency if needed
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6

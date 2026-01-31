@@ -1,0 +1,106 @@
+
+  spring:
+    application:
+      name: k8s
+
+    profiles:
+      active: ${SPRING_PROFILE:dev}
+
+    datasource:
+      url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/ecommerce}
+      username: ${DATABASE_USERNAME:postgres}
+      password: ${DATABASE_PASSWORD:postgres}
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        maximum-pool-size: 20
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+
+    jpa:
+      hibernate:
+        ddl-auto: validate
+      show-sql: false
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          format_sql: true
+          use_sql_comments: true
+          jdbc:
+            batch_size: 20
+          order_inserts: true
+          order_updates: true
+
+    flyway:
+      enabled: true
+      baseline-on-migrate: true
+      locations: classpath:db/migration
+
+    data:
+      redis:
+        host: ${REDIS_HOST:localhost}
+        port: ${REDIS_PORT:6379}
+        password: ${REDIS_PASSWORD:}
+        timeout: 2000ms
+
+    cache:
+      type: redis
+      redis:
+        time-to-live: 600000
+
+    security:
+      jwt:
+        secret: ${JWT_SECRET:your-secret-key-change-in-production}
+        expiration: 86400000
+
+  server:
+    port: ${SERVER_PORT:8080}
+    compression:
+      enabled: true
+    tomcat:
+      threads:
+        max: 200
+        min-spare: 10
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics,prometheus
+    endpoint:
+      health:
+        show-details: when-authorized
+        probes:
+          enabled: true
+    metrics:
+      export:
+        prometheus:
+          enabled: true
+      tags:
+        application: ${spring.application.name}
+
+  logging:
+    level:
+      root: INFO
+      com.ecommerce: DEBUG
+      org.springframework.web: INFO
+      org.hibernate.SQL: DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+      file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file:
+      name: logs/application.log
+      max-size: 10MB
+      max-history: 30
+
+  springdoc:
+    api-docs:
+      path: /api-docs
+    swagger-ui:
+      path: /swagger-ui.html
+      operations-sorter: method
+
+  app:
+    cors:
+      allowed-origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:4200}
