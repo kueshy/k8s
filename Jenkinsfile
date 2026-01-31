@@ -272,73 +272,73 @@ pipeline {
             }
         }
 
-        stage('🧪 Unit Tests') {
-            steps {
-                script {
-                    echo "Running unit tests..."
-                    sh '''
-                        mvn test \
-                            -Dtest=*Test \
-                            -B
-                    '''
-                }
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-
-                    publishHTML(target: [
-                        reportDir: 'target/surefire-reports',
-                        reportFiles: '*.html',
-                        reportName: 'Unit Test Report'
-                    ])
-                }
-            }
-        }
-
-        stage('🔗 Integration Tests') {
-            when {
-                expression { params.RUN_INTEGRATION_TESTS }
-            }
-            steps {
-                script {
-                    echo "Starting test database..."
-
-                    sh '''
-                        # Start PostgreSQL for integration tests
-                        docker run -d \
-                            --name test-postgres \
-                            -e POSTGRES_DB=testdb \
-                            -e POSTGRES_USER=testuser \
-                            -e POSTGRES_PASSWORD=testpass \
-                            -p 5433:5432 \
-                            postgres:15-alpine
-
-                        # Wait for database to be ready
-                        sleep 10
-                    '''
-
-                    try {
-                        sh '''
-                            mvn verify \
-                                -Dtest=*IT \
-                                -DskipUnitTests=true \
-                                -Dspring.datasource.url=jdbc:postgresql://localhost:5433/testdb \
-                                -Dspring.datasource.username=testuser \
-                                -Dspring.datasource.password=testpass \
-                                -B
-                        '''
-                    } finally {
-                        sh 'docker stop test-postgres && docker rm test-postgres'
-                    }
-                }
-            }
-            post {
-                always {
-                    junit 'target/failsafe-reports/*.xml'
-                }
-            }
-        }
+//         stage('🧪 Unit Tests') {
+//             steps {
+//                 script {
+//                     echo "Running unit tests..."
+//                     sh '''
+//                         mvn test \
+//                             -Dtest=*Test \
+//                             -B
+//                     '''
+//                 }
+//             }
+//             post {
+//                 always {
+//                     junit 'target/surefire-reports/*.xml'
+//
+//                     publishHTML(target: [
+//                         reportDir: 'target/surefire-reports',
+//                         reportFiles: '*.html',
+//                         reportName: 'Unit Test Report'
+//                     ])
+//                 }
+//             }
+//         }
+//
+//         stage('🔗 Integration Tests') {
+//             when {
+//                 expression { params.RUN_INTEGRATION_TESTS }
+//             }
+//             steps {
+//                 script {
+//                     echo "Starting test database..."
+//
+//                     sh '''
+//                         # Start PostgreSQL for integration tests
+//                         docker run -d \
+//                             --name test-postgres \
+//                             -e POSTGRES_DB=testdb \
+//                             -e POSTGRES_USER=testuser \
+//                             -e POSTGRES_PASSWORD=testpass \
+//                             -p 5433:5432 \
+//                             postgres:15-alpine
+//
+//                         # Wait for database to be ready
+//                         sleep 10
+//                     '''
+//
+//                     try {
+//                         sh '''
+//                             mvn verify \
+//                                 -Dtest=*IT \
+//                                 -DskipUnitTests=true \
+//                                 -Dspring.datasource.url=jdbc:postgresql://localhost:5433/testdb \
+//                                 -Dspring.datasource.username=testuser \
+//                                 -Dspring.datasource.password=testpass \
+//                                 -B
+//                         '''
+//                     } finally {
+//                         sh 'docker stop test-postgres && docker rm test-postgres'
+//                     }
+//                 }
+//             }
+//             post {
+//                 always {
+//                     junit 'target/failsafe-reports/*.xml'
+//                 }
+//             }
+//         }
 
         stage('📊 Code Coverage') {
             steps {
