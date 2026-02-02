@@ -758,6 +758,7 @@ pipeline {
     tools {
         maven 'maven3'
         jdk 'JDK17'
+        docker 'docker'
     }
     stages {
         stage('Checkout') {
