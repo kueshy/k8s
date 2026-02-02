@@ -767,16 +767,16 @@ pipeline {
         }
         stage('Build JAR') {
             steps {
-                bat 'mvn clean package -DskipTests -B'  // bat for Windows
+                sh 'mvn clean package -DskipTests -B'  // bat for Windows
             }
         }
         stage('Build & Push Docker Image') {
             steps {
                 script {
                     def imageTag = "1.0.${env.BUILD_NUMBER}"
-                    bat "docker build -t codedev001/k8s-demo:${imageTag} ."
+                    sh "docker build -t codedev001/k8s-demo:${imageTag} ."
                     withDockerRegistry([credentialsId: 'docker-hub-creds', url: '']) {
-                        bat "docker push codedev001/k8s-demo:${imageTag}"
+                        sh "docker push codedev001/k8s-demo:${imageTag}"
                     }
                 }
             }
