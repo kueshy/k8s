@@ -31,15 +31,27 @@
 ##ENTRYPOINT ["java", "-jar", "app.jar"]
 #ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
 
-# Build stage
+# ---------- Build stage ----------
 FROM maven:3.9-amazoncorretto-17 AS build
 WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
 
-# Run stage
+# Copy only pom.xml first
+COPY pom.xml .
+
+# Download dependencies (cached)
+RUN mvn -B -q dependency:go-offline
+
+# Copy source code
+COPY src ./src
+
+# Build the app
+RUN mvn -B clean package -DskipTests
+
+# ---------- Run stage ----------
 FROM amazoncorretto:17-alpine
 WORKDIR /app
+
 COPY --from=build /app/target/k8s.jar app.jar
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

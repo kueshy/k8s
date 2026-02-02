@@ -781,17 +781,14 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Kubernetes') {
-            steps {
-                withKubeConfig(
-                    credentialsId: 'k8s-kubeconfig-file'
-                ) {
-                    sh '''
-                        kubectl apply -f k8s/deployment.yaml
-                        kubectl apply -f k8s/service.yaml
-                    '''
-                }
-            }
+        withKubeConfig(credentialsId: 'k8s-kubeconfig-file') {
+            sh '''
+                set -e
+                export IMAGE_TAG=${GIT_COMMIT:0:7}
+                envsubst < k8s/deployment.yaml | kubectl apply -f -
+                kubectl apply -f k8s/service.yaml
+                kubectl rollout status deployment/ams-backend
+            '''
         }
 
     }
