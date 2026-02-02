@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: demo
-          image: codedev001/spring-boot-demo:1.1  # Your image
+          image: codedev001/k8s-demo:${imageTag}  # Your image
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
