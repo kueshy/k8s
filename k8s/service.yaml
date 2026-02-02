@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-boot-demo-service
+  name: spring-boot-demo-k8s-service
 spec:
   selector:
-    app: spring-boot-demo
+    app: spring-boot-demo-k8s
   ports:
     - protocol: TCP
       port: 80
