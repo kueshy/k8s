@@ -783,12 +783,16 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                kubernetesDeploy(
-                    configs: 'k8s/deployment.yaml,k8s/service.yaml',
-                    kubeconfigFile: 'k8s-kubeconfig-file',
-                    enableConfigSubstitution: true
-                )
+                withKubeConfig(
+                    credentialsId: 'k8s-kubeconfig-file'
+                ) {
+                    sh '''
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                    '''
+                }
             }
         }
+
     }
 }
