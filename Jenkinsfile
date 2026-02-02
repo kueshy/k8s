@@ -786,7 +786,7 @@ pipeline {
             steps {
                 kubernetesDeploy(
                     configs: 'k8s/deployment.yaml,k8s/service.yaml',
-                    kubeconfigId: 'k8s-kubeconfig-file',
+                    kubeconfigFile: 'k8s-kubeconfig-file',
                     enableConfigSubstitution: true
                 )
             }
