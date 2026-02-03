@@ -10,14 +10,14 @@ metadata:
   name: jenkins
 rules:
   - apiGroups: [""]
-    resources: ["pods", "pods/exec", "pods/log"]
-    verbs: ["*"]
+    resources: ["pods", "services", "endpoints", "persistentvolumeclaims", "pods/exec", "pods/log"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["apps"]
-    resources: ["deployments", "replicasets"]
-    verbs: ["*"]
+    resources: ["deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: [""]
-    resources: ["services"]
-    verbs: ["*"]
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

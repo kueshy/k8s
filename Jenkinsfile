@@ -789,10 +789,13 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withKubeConfig(credentialsId: 'k8s-kubeconfig-file') {
+                    withKubeConfig(
+                        credentialsId: 'kubernetes-token',
+                        serverUrl: 'https://127.0.0.1:60829'
+                    ) {
                         sh """
                             kubectl get nodes
-                            export IMAGE_TAG=${BUILD_NUMBER}
+                            export imageTag=${BUILD_NUMBER}
                             envsubst < k8s/deployment.yaml | kubectl apply -f -
                             kubectl apply -f k8s/service.yaml
                             kubectl rollout status deployment/ams-backend
