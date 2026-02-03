@@ -790,14 +790,14 @@ pipeline {
             steps {
                 script {
                     withKubeConfig(credentialsId: 'k8s-kubeconfig-file') {
-                        sh '''
+                        sh """
                             set -e
                             kubectl get nodes
                             export IMAGE_TAG=${BUILD_NUMBER}
                             envsubst < k8s/deployment.yaml | kubectl apply -f -
                             kubectl apply -f k8s/service.yaml
                             kubectl rollout status deployment/ams-backend
-                        '''
+                        """
                     }
                 }
             }
