@@ -773,7 +773,7 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    def imageTag = "1.0.${env.BUILD_NUMBER}"
+                    def imageTag = ${env.BUILD_NUMBER}
                     sh "docker build -t codedev001/k8s-demo:${imageTag} ."
                     withDockerRegistry([credentialsId: 'docker-hub-creds', url: '']) {
                         sh "docker push codedev001/k8s-demo:${imageTag}"
@@ -788,7 +788,7 @@ pipeline {
                     withKubeConfig(credentialsId: 'k8s-kubeconfig-file') {
                         sh '''
                             set -e
-                            export IMAGE_TAG=${GIT_COMMIT:0:7}
+                            export IMAGE_TAG=${env.BUILD_NUMBER}
                             envsubst < k8s/deployment.yaml | kubectl apply -f -
                             kubectl apply -f k8s/service.yaml
                             kubectl rollout status deployment/ams-backend
