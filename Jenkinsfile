@@ -759,6 +759,10 @@ pipeline {
         maven 'maven3'
         jdk 'JDK17'
     }
+    environment{
+        BUILD_NUMBER = "${BUILD_NUMBER}"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -773,7 +777,7 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    def imageTag = ${env.BUILD_NUMBER}
+                    def imageTag = ${BUILD_NUMBER}
                     sh "docker build -t codedev001/k8s-demo:${imageTag} ."
                     withDockerRegistry([credentialsId: 'docker-hub-creds', url: '']) {
                         sh "docker push codedev001/k8s-demo:${imageTag}"
@@ -788,7 +792,7 @@ pipeline {
                     withKubeConfig(credentialsId: 'k8s-kubeconfig-file') {
                         sh '''
                             set -e
-                            export IMAGE_TAG=${env.BUILD_NUMBER}
+                            export IMAGE_TAG=${BUILD_NUMBER}
                             envsubst < k8s/deployment.yaml | kubectl apply -f -
                             kubectl apply -f k8s/service.yaml
                             kubectl rollout status deployment/ams-backend
