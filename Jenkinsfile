@@ -759,8 +759,9 @@ pipeline {
         maven 'maven3'
         jdk 'JDK17'
     }
-    environment{
-        BUILD_NUMBER = "${BUILD_NUMBER}"
+
+    environment {
+        DOCKER_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -777,10 +778,9 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    def imageTag = ${BUILD_NUMBER}
-                    sh "docker build -t codedev001/k8s-demo:${imageTag} ."
+                    sh "docker build -t codedev001/k8s-demo:${BUILD_NUMBER} ."
                     withDockerRegistry([credentialsId: 'docker-hub-creds', url: '']) {
-                        sh "docker push codedev001/k8s-demo:${imageTag}"
+                        sh "docker push codedev001/k8s-demo:${BUILD_NUMBER}"
                     }
                 }
             }
