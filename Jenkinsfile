@@ -791,7 +791,7 @@ pipeline {
                 script {
                     withKubeConfig(
                         credentialsId: 'kubernetes-token',
-                        serverUrl: 'https://127.0.0.1:60829'
+                        serverUrl: 'https://127.0.0.1:53265'
                     ) {
                         sh """
                             kubectl get nodes
