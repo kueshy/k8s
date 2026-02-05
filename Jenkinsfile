@@ -770,11 +770,7 @@ pipeline {
                 git url: 'https://github.com/kueshy/k8s.git', branch: 'main'
             }
         }
-        stage('Build JAR') {
-            steps {
-                sh 'mvn clean package -DskipTests -B'  // bat for Windows
-            }
-        }
+
         stage('Build & Push Docker Image') {
             steps {
                 script {

@@ -17,7 +17,7 @@ spec:
       containers:
         - name: demo
           image: codedev001/k8s-demo:${imageTag}  # Your image
-          imagePullPolicy: Always
+          imagePullPolicy: Never #Always
           ports:
             - containerPort: 8080
           resources:
